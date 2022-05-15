@@ -21,7 +21,7 @@ Feature: Read fruits from excel or json file
       ##@externaldata@./src/test/resources/data/Fruits.xlsx
 
 
-  	@excel
+  @excel
   Scenario: Read fruits and color from excel file with sheet name
     Given I have list of fruits with colors.
     When I selct fruit "<Name>".
@@ -29,4 +29,16 @@ Feature: Read fruits from excel or json file
     
     Examples:
       ##@externaldata@./src/test/resources/data/Fruits.xlsx@Sheet2
+    
+      
+  @csv
+  Scenario: Read fruits and color from excel file with sheet name
+    Given I have list of fruits with colors.
+    When I selct fruit "<Name>".
+    Then Color should be "<Color>".
+    
+    Examples:
+      ##@externaldata@./src/test/resources/data/Fruits.csv@Sheet2
+
+
 

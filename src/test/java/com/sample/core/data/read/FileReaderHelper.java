@@ -8,8 +8,10 @@ public class FileReaderHelper {
 			return new ExcelReader();
 		} else if(filePath.endsWith(".json")) {
 			return new JsonReader();
-		} else if(filePath.endsWith(".xml")) {
-			//TODO: implement
+		} else if(filePath.endsWith(".csv")) {
+			return new CSVFileReader();
+		} else {
+			//TODO : implement for other methods
 		}
 		
 		return null;
