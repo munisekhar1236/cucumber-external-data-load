@@ -47,9 +47,11 @@ public class CustomCucumberRunner extends Runner {
         try {
             runAnnotatedMethods(BeforeSuite.class);
             cucumber = new Cucumber(classValue);
+            cucumber.run(notifier);
+            runAnnotatedMethods(AfterSuite.class);
         } catch (Exception e) {
             e.printStackTrace();
         }
-        cucumber.run(notifier);
+        
     }
 }

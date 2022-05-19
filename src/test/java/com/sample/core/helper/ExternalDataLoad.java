@@ -22,16 +22,29 @@ import com.sample.core.data.read.FileReaderHelper;
 
 public class ExternalDataLoad {
 	
-	public static void overrideFeatureFiles(String featuresDirectoryPath) throws IOException, InvalidFormatException {
-
+	public static void readExternalData(String featuresDirectoryPath) throws IOException, InvalidFormatException {
+		overrideFeatureFiles(featuresDirectoryPath,false);
+	}
+	
+	public static void cleanExternalData(String featuresDirectoryPath) throws IOException, InvalidFormatException {
+		overrideFeatureFiles(featuresDirectoryPath,true);
+	}
+	
+	private static void overrideFeatureFiles(String featuresDirectoryPath,boolean isCleanup) throws IOException, InvalidFormatException {
+		
 		List<File> listOfFeatureFiles = listOfFeatureFiles(new File(featuresDirectoryPath));
 
 		for (File featureFile : listOfFeatureFiles) {
 			
-			List<String> featureWithExcelData = setExcelDataToFeature(featureFile);
+			List<String> featureWithExcelData = null;
 			
-			try (BufferedWriter writer = new BufferedWriter(
-					new OutputStreamWriter(new FileOutputStream(featureFile), "UTF-8"));) {
+			if(isCleanup) {
+				featureWithExcelData = cleanExternalData(featureFile);
+			} else {
+				featureWithExcelData = setExternalDataToFeatureFIle(featureFile);
+			}
+			
+			try (BufferedWriter writer = new BufferedWriter( new OutputStreamWriter(new FileOutputStream(featureFile), "UTF-8"));) {
 				
 				for (String string : featureWithExcelData) {
 					writer.write(string);
@@ -41,8 +54,42 @@ public class ExternalDataLoad {
 			}
 		}
 	}
+	
+	private static List<String> cleanExternalData(File featureFile) throws InvalidFormatException, IOException {
+		List<String> fileData = new ArrayList<String>();
+		
+		try (BufferedReader buffReader = new BufferedReader(
+				new InputStreamReader(new BufferedInputStream(new FileInputStream(featureFile)), "UTF-8"))) {
+			
+			String data;
+			boolean foundHashTag = false;
 
-	private static List<String> setExcelDataToFeature(File featureFile) throws InvalidFormatException, IOException {
+			while ((data = buffReader.readLine()) != null) {
+				if (data.trim().contains("##@externaldata")) {
+					foundHashTag = true;
+					fileData.add(data);
+					continue;
+				}
+				
+				if(foundHashTag) {
+					if (data.startsWith("|") || data.endsWith("|")) {
+						//fileData.add(data);
+						continue;
+					} else {
+						foundHashTag = false;
+					}
+
+					
+				}
+				fileData.add(data);
+				
+			}
+			
+		}
+		return fileData;
+	}
+
+	private static List<String> setExternalDataToFeatureFIle(File featureFile) throws InvalidFormatException, IOException {
 
 		List<String> fileData = new ArrayList<String>();
 

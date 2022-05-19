@@ -11,7 +11,7 @@ public class FruitsStepDef {
 		System.out.println("I have list of fruits with it's color");
 	}
 	
-	@When("I selct fruit {string}.")
+	@When("I select fruit {string}.")
 	public void scenario_fruit(String name) {
 		System.out.println("Fruit name is :: "+name);
 	}
